@@ -1,8 +1,18 @@
 import pygame 
 
-# constants
-BLUE = (0, 0, 225)
-WHITE = (255, 255, 255)
+number_of_columns = 5
+number_of_rows = 3
+border_width = 1
+square_size = 100
+space_between_squares = 5
+
+
+
+
+def draw_square_with_border(border_color,square_color,x,y,square_size,border_width):
+    fill_size = square_size - border_width*2
+    pygame.draw.rect(display, border_color, (x, y, square_size,square_size), width = border_width)
+    pygame.draw.rect(display, square_color, (x + border_width, y + border_width, fill_size,fill_size))
 
 pygame.init()
 
@@ -17,18 +27,16 @@ while not exit:
             exit = True
 
 
-    display.fill(WHITE)
+    display.fill(pygame.Color("white"))
 
-    pygame.draw.rect(display, BLUE, (100, 100, 100, 100), width=1)#Row 1, 
-    pygame.draw.rect(display, BLUE, (205, 100, 100, 100), width=1)
-    pygame.draw.rect(display, BLUE, (310, 100, 100, 100), width=1)
+   
+    for column in range(number_of_columns):
+        for row in range(number_of_rows):
+            draw_square_with_border(pygame.Color("black"),pygame.Color("grey"),(square_size + space_between_squares)*column,(square_size + space_between_squares)*row,square_size,border_width)
+            '''pygame.draw.rect(display, pygame.Color("black"), ((square_size + space_between_squares)*column, (square_size + space_between_squares)*row, square_size,square_size), width = border_width)
+            pygame.draw.rect(display, pygame.Color("grey"), ((square_size + space_between_squares)*column + border_width, (square_size + space_between_squares)*row + border_width, fill_size,fill_size))'''
 
-    pygame.draw.rect(display, BLUE, (100, 205, 100, 100), width=1)#Row 2, 
-    pygame.draw.rect(display, BLUE, (205, 205, 100, 100), width=1) 
-    pygame.draw.rect(display, BLUE, (310, 205, 100, 100), width=1)  
 
-    pygame.draw.rect(display, BLUE, (100, 310, 100, 100), width=1)#Row 3
-    pygame.draw.rect(display, BLUE, (205, 310, 100, 100), width=1)  
-    pygame.draw.rect(display, BLUE, (310, 310, 100, 100), width=1)  
+
 
     pygame.display.update()
