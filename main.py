@@ -5,7 +5,8 @@ number_of_rows = 3
 border_width = 1
 square_size = 100
 space_between_squares = 5
-
+starting_position_x = 0
+starting_position_y = 0
 
 
 
@@ -32,7 +33,7 @@ while not exit:
    
     for column in range(number_of_columns):
         for row in range(number_of_rows):
-            draw_square_with_border(pygame.Color("black"),pygame.Color("grey"),(square_size + space_between_squares)*column,(square_size + space_between_squares)*row,square_size,border_width)
+            draw_square_with_border(pygame.Color("black"),pygame.Color("grey"), starting_position_x + (square_size + space_between_squares)*column, starting_position_y + (square_size + space_between_squares)*row,square_size,border_width)
             '''pygame.draw.rect(display, pygame.Color("black"), ((square_size + space_between_squares)*column, (square_size + space_between_squares)*row, square_size,square_size), width = border_width)
             pygame.draw.rect(display, pygame.Color("grey"), ((square_size + space_between_squares)*column + border_width, (square_size + space_between_squares)*row + border_width, fill_size,fill_size))'''
 
