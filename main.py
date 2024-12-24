@@ -39,6 +39,9 @@ pygame.display.set_caption("Minesweeper")
 
 exit = False
 
+clock = pygame.time.Clock()
+start_ticks = pygame.time.get_ticks()
+
 
 cell_data = []
 for row in range(number_of_rows): # 0, 1
@@ -47,7 +50,6 @@ for row in range(number_of_rows): # 0, 1
         cell_data[row].append(Cell())
 
 cell_data[0][8].set_is_mine()
-
 while not exit: 
     for event in pygame.event.get(): 
         if event.type == pygame.QUIT: 
@@ -63,18 +65,17 @@ while not exit:
             #left click
             elif event.button == 1:
                 cell_data[row][column].set_color(pygame.Color("red"))
-                
-
-
-            
-    
-
-
     display.fill(pygame.Color("grey"))
-
+    #timer math/display
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) // 1000
+    minutes = elapsed_time // 60
+    seconds = elapsed_time % 60
+    timer_text = f"{minutes:02}:{seconds:02}"
+    rendered_timer_text = wording_font.render(timer_text, False, (0,0,0))
+    display.blit(rendered_timer_text,(100,250))
+    
     text_surface = wording_font.render("Farmsweeper", False, (0,0,0))
     display.blit(text_surface, (0,0))
-    
     
     for row in range(number_of_rows):
         for column in range(number_of_columns):
