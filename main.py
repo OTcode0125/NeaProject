@@ -12,7 +12,7 @@ number_of_mines = 50
 
 pygame.font.init()
 wording_font = pygame.font.SysFont("Roman", 70)
-
+number_font = pygame.font.SysFont("Roman", square_size -5)
 def draw_square_with_border(border_color, square_color, x, y, square_size, border_width):
     fill_size = square_size - border_width * 2
     pygame.draw.rect(display, border_color, (x, y, square_size, square_size), width=border_width)
@@ -152,16 +152,17 @@ while not exit:
     mine_count_surface = wording_font.render(mine_text, False, (0,0,0))
     display.blit(mine_count_surface, (100, 450))
 
-
-
     for row in range(number_of_rows):
         for column in range(number_of_columns):
             cell_x = starting_position_x + (square_size + space_between_squares) * column
             cell_y = starting_position_y + (square_size + space_between_squares) * row
             cell_color = cell_data[row][column].get_color()
             draw_square_with_border(pygame.Color("black"),cell_color,cell_x,cell_y,square_size,border_width)
-            surrounding_mines = cell_data[row][column].get_surrounding_mines()
-            number_of_surrounding_mines_surface = wording_font.render(str(surrounding_mines),False,(0,0,0))
-            display.blit(number_of_surrounding_mines_surface,(cell_x,cell_y))
+            if cell_data[row][column].is_revealed():
+                surrounding_mines = cell_data[row][column].get_surrounding_mines()
+                if surrounding_mines > 0:
+                    number_of_surrounding_mines_surface = number_font.render(str(surrounding_mines), False, (0, 0, 0))
+                    display.blit(number_of_surrounding_mines_surface, (cell_x,cell_y))
+
 
     pygame.display.update()
