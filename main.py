@@ -36,12 +36,14 @@ class Cell():
         self.__color = pygame.Color("white")
         self.__is_mine = False
         self.__is_revealed = False
+        self.__surrounding_mines = 0
+
 
     def get_color(self):
         return self.__color
 
-    def set_color(self, new_color):
-        self.__color = new_color
+    def set_color(self, color):
+        self.__color = color
 
     def set_is_mine(self):
         self.__is_mine = True
@@ -51,9 +53,20 @@ class Cell():
     
     def reveal(self):
         self.__is_revealed = True
+        if self.is_mine():
+            self.set_color(pygame.Color("black"))  # Mark mine cell
+        else:
+            self.set_color(pygame.Color("red"))
     
     def is_revealed(self):
         return self.__is_revealed
+    
+    def set_surrounding_mines(self, surrounding_mines):
+        self.__surrounding_mines = surrounding_mines
+    
+    def get_surrounding_mines(self):
+        return self.__surrounding_mines
+    
 
 pygame.init()
 
@@ -89,10 +102,38 @@ while not exit:
                 # Left click
                 elif event.button == 1:
                     cell_data[row][column].reveal()
-                    if cell_data[row][column].is_mine():
-                        cell_data[row][column].set_color(pygame.Color("black"))  # Mark mine cell
-                    else:
-                        cell_data[row][column].set_color(pygame.Color("red"))
+                    if not cell_data[row][column].is_mine():
+                        surrounding_mines = 0
+                        #bottom right
+                        if row < number_of_rows-1 and column < number_of_columns-1 and cell_data[row+1][column+1].is_mine():
+                            surrounding_mines+= 1
+                        #bottom left
+                        if cell_data[row+1][column-1].is_mine():
+                            surrounding_mines+=1
+                        #right
+                        if cell_data[row][column+1].is_mine():
+                            surrounding_mines+=1
+                        #left
+                        if cell_data[row][column-1].is_mine():
+                            surrounding_mines+=1
+                        #below
+                        if cell_data[row+1][column].is_mine():
+                            surrounding_mines+=1
+                        #top
+                        if cell_data[row-1][column].is_mine():
+                            surrounding_mines+=1
+                        #top left
+                        if cell_data[row-1][column-1].is_mine():
+                            surrounding_mines+=1
+                        #top right
+                        if cell_data[row-1][column+1].is_mine():
+                            surrounding_mines+=1
+                        
+                        cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                        
+                        
+                        
+
 
     display.fill(pygame.Color("grey"))
 
@@ -111,18 +152,16 @@ while not exit:
     mine_count_surface = wording_font.render(mine_text, False, (0,0,0))
     display.blit(mine_count_surface, (100, 450))
 
-    
+
 
     for row in range(number_of_rows):
         for column in range(number_of_columns):
+            cell_x = starting_position_x + (square_size + space_between_squares) * column
+            cell_y = starting_position_y + (square_size + space_between_squares) * row
             cell_color = cell_data[row][column].get_color()
-            draw_square_with_border(
-                pygame.Color("black"),
-                cell_color,
-                starting_position_x + (square_size + space_between_squares) * column,
-                starting_position_y + (square_size + space_between_squares) * row,
-                square_size,
-                border_width
-            )
+            draw_square_with_border(pygame.Color("black"),cell_color,cell_x,cell_y,square_size,border_width)
+            surrounding_mines = cell_data[row][column].get_surrounding_mines()
+            number_of_surrounding_mines_surface = wording_font.render(str(surrounding_mines),False,(0,0,0))
+            display.blit(number_of_surrounding_mines_surface,(cell_x,cell_y))
 
     pygame.display.update()
