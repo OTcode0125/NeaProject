@@ -9,6 +9,9 @@ space_between_squares = 0
 starting_position_x = 1300
 starting_position_y = 300
 number_of_mines = 50
+total_cells = number_of_columns*number_of_rows
+free_cells = total_cells-number_of_mines
+
 
 pygame.font.init()
 wording_font = pygame.font.SysFont("Roman", 70)
@@ -20,9 +23,8 @@ def draw_square_with_border(border_color, square_color, x, y, square_size, borde
 
 def getting_mouse_position():
     return pygame.mouse.get_pos()
-#random mine placement func
-def random_mine_placement(cell_data, number_of_rows, number_of_columns, number_of_mines):
-    total_cells = number_of_rows * number_of_columns
+#random mine placement func / number_of_columns here and not rows bc used in lines 32,33
+def random_mine_placement(cell_data, total_cells, number_of_columns, number_of_mines):
     mine_positions = random.sample(range(total_cells), number_of_mines)
 
     for pos in mine_positions:
@@ -37,6 +39,7 @@ class Cell():
         self.__is_mine = False
         self.__is_revealed = False
         self.__surrounding_mines = 0
+        self.__flag = False
 
 
     def get_color(self):
@@ -50,6 +53,16 @@ class Cell():
 
     def is_mine(self):
         return self.__is_mine
+
+    def set_flag(self, flag):
+        self.__flag = flag
+        
+    def is_flag(self):
+        return self.__flag
+    
+
+
+
     
     def reveal(self):
         self.__is_revealed = True
@@ -84,7 +97,7 @@ for row in range(number_of_rows):
     for column in range(number_of_columns):
         cell_data[row].append(Cell())
 
-random_mine_placement(cell_data, number_of_rows, number_of_columns, number_of_mines)
+random_mine_placement(cell_data, total_cells,number_of_columns, number_of_mines)
 
 while not exit:
     for event in pygame.event.get():
@@ -98,38 +111,53 @@ while not exit:
             if 0 <= row < number_of_rows and 0 <= column < number_of_columns:
                 # Right click
                 if event.button == 3:
-                    cell_data[row][column].set_color(pygame.Color("blue"))
+                    if not cell_data[row][column].is_revealed():
+                        if not cell_data[row][column].is_flag():
+                            cell_data[row][column].set_color(pygame.Color("blue"))
+                            cell_data[row][column].set_flag(True)
+                        else:
+                            cell_data[row][column].set_flag(False)
+                            cell_data[row][column].set_color(pygame.Color("white"))
+
+
+
+
                 # Left click
                 elif event.button == 1:
-                    cell_data[row][column].reveal()
-                    if not cell_data[row][column].is_mine():
-                        surrounding_mines = 0
-                        #bottom right
-                        if row < number_of_rows-1 and column < number_of_columns-1 and cell_data[row+1][column+1].is_mine():
-                            surrounding_mines+= 1
-                        #bottom left
-                        if cell_data[row+1][column-1].is_mine():
-                            surrounding_mines+=1
-                        #right
-                        if cell_data[row][column+1].is_mine():
-                            surrounding_mines+=1
-                        #left
-                        if cell_data[row][column-1].is_mine():
-                            surrounding_mines+=1
-                        #below
-                        if cell_data[row+1][column].is_mine():
-                            surrounding_mines+=1
-                        #top
-                        if cell_data[row-1][column].is_mine():
-                            surrounding_mines+=1
-                        #top left
-                        if cell_data[row-1][column-1].is_mine():
-                            surrounding_mines+=1
-                        #top right
-                        if cell_data[row-1][column+1].is_mine():
-                            surrounding_mines+=1
-                        
-                        cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                    if not cell_data[row][column].is_flag():
+                        cell_data[row][column].reveal()
+                        free_cells -= 1 
+                        if not cell_data[row][column].is_mine():
+                            surrounding_mines = 0
+                            #bottom right
+                            if row < number_of_rows-1 and column < number_of_columns-1 and cell_data[row+1][column+1].is_mine():
+                                surrounding_mines += 1
+                            #bottom left
+                            if row < number_of_rows-1 and column > 0 and cell_data[row+1][column-1].is_mine():
+                                surrounding_mines += 1
+                            #right
+                            if column < number_of_columns-1 and cell_data[row][column+1].is_mine():
+                                surrounding_mines += 1
+                            #left
+                            if column >0 and cell_data[row][column-1].is_mine():
+                                surrounding_mines += 1
+                            #below
+                            if row < number_of_rows-1 and cell_data[row+1][column].is_mine():
+                                surrounding_mines += 1
+                            #top
+                            if row > 0 and cell_data[row-1][column].is_mine():
+                                surrounding_mines += 1
+                            #top left
+                            if row >0 and column > 0 and cell_data[row-1][column-1].is_mine():
+                                surrounding_mines += 1
+                            #top right
+                            if row > 0 and column < number_of_columns-1 and cell_data[row-1][column+1].is_mine():
+                                surrounding_mines += 1
+                            cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                        else:
+                            print("YOU FAILED !!!")
+
+                            
                         
                         
                         
@@ -148,9 +176,9 @@ while not exit:
     title_surface = wording_font.render("Farmsweeper", False, (0, 0, 0))
     display.blit(title_surface, (0, 0))
     
-    mine_text = f"Mine Count: {number_of_mines}"
-    mine_count_surface = wording_font.render(mine_text, False, (0,0,0))
-    display.blit(mine_count_surface, (100, 450))
+    free_cells_text = f"Free Cells: {free_cells}"
+    free_cells_surface = wording_font.render(free_cells_text, False, (0,0,0))
+    display.blit(free_cells_surface, (100, 450))
 
     for row in range(number_of_rows):
         for column in range(number_of_columns):
@@ -163,6 +191,7 @@ while not exit:
                 if surrounding_mines > 0:
                     number_of_surrounding_mines_surface = number_font.render(str(surrounding_mines), False, (0, 0, 0))
                     display.blit(number_of_surrounding_mines_surface, (cell_x,cell_y))
+                
 
 
     pygame.display.update()
