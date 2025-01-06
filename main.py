@@ -1,6 +1,6 @@
 # main.py
 import pygame
-
+import game_code
 from main_menu import main_menu_screen
 pygame.init()
 
@@ -20,6 +20,8 @@ while running:
     #decide which screen in use
     if current_screen == "main_menu":
         result = main_menu_screen(display)
+        '''if result == "game":
+            current_screen = game_code(display)'''
 
     # Update the display
     pygame.display.flip()

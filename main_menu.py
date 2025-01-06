@@ -18,6 +18,6 @@ def main_menu_screen(display):
 
     '''keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        return (needs to be made into game_code)
+        return "game"
 
     return "main_menu"'''
