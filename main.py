@@ -1,6 +1,7 @@
 import pygame
 from main_menu import main_menu_screen
 from login import login_screen
+from choose_difficulty import choose_difficulty_screen
 
 pygame.init()
 
@@ -22,11 +23,15 @@ while running:
         result = main_menu_screen(display)
         if result == "log_in":
             current_screen = "log_in"
+        elif result == "choose_difficulty":
+            current_screen = "choose_difficulty"
         elif result == "quit":
             running = False
 
     elif current_screen == "log_in":
         login_screen(display)
+    elif current_screen == "choose_difficulty":
+        choose_difficulty_screen(display)
 
     pygame.display.flip()
     clock.tick(30)

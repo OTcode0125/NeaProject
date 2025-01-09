@@ -118,13 +118,9 @@ while not exit:
                         else:
                             cell_data[row][column].set_flag(False)
                             cell_data[row][column].set_color(pygame.Color("white"))
-
-
-
-
-                # Left click
+                # Left click DOCUMENT EXCEPTION HANDLING WITH FREE_CELLS
                 elif event.button == 1:
-                    if not cell_data[row][column].is_flag():
+                    if not cell_data[row][column].is_revealed() and not cell_data[row][column].is_flag():
                         cell_data[row][column].reveal()
                         free_cells -= 1 
                         if not cell_data[row][column].is_mine():
@@ -155,7 +151,11 @@ while not exit:
                                 surrounding_mines += 1
                             cell_data[row][column].set_surrounding_mines(surrounding_mines)
                         else:
-                            print("YOU FAILED !!!")
+                            print("You died")
+                        
+                        if free_cells == 0:
+                            print("CONGRATS! YOU BEAT THE MOLES")
+
 
                             
                         

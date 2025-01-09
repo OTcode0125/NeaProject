@@ -28,5 +28,7 @@ def main_menu_screen(display):
         return "log_in"
     elif key_press[pygame.K_2]:
         return "quit"
+    elif key_press[pygame.K_RETURN]:
+        return "choose_difficulty"
 
     return "main_menu"
