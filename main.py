@@ -90,6 +90,13 @@ class Cell():
     def get_surrounding_mines(self):
         return self.__surrounding_mines
     
+class Sprites(pygame.sprite.Sprite):
+    def __init__(self, image_path, x, y, width, height):
+        super().__init__()
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image,(width, height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
 
 pygame.init()
 
@@ -98,6 +105,11 @@ start_ticks = pygame.time.get_ticks()
 
 display = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Minesweeper")
+
+#mainmenusprites
+'''mainmenuscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
+mainmenu_sprites = pygame.sprite.Group()
+mainmenu_sprites.add(mainmenuscreen)'''
 
 cell_data = []
 for row in range(number_of_rows):
@@ -140,6 +152,8 @@ while running:
         
         quit_text = big_font.render("(2)QUIT", True, (0, 0, 0))
         display.blit(quit_text, (10, 600))
+
+        '''mainmenu_sprites.draw(display)
         
         if key_press[pygame.K_1]:
             current_screen = "log_in"
