@@ -14,17 +14,17 @@ running = True
 number_of_columns = 20
 number_of_rows = 20
 border_width = 1
-square_size = 25
+square_size = 35
 space_between_squares = 0
-starting_position_x = 1300
-starting_position_y = 300
+starting_position_x = 600
+starting_position_y = 190
 number_of_mines = 50
 total_cells = number_of_columns*number_of_rows
 free_cells = total_cells-number_of_mines
 
 
 pygame.font.init()
-wording_font = pygame.font.SysFont("Roman", 70)
+wording_font = pygame.font.Font("bubble_font.ttf", 50)
 number_font = pygame.font.SysFont("Roman", square_size -5)
 def draw_square_with_border(border_color, square_color, x, y, square_size, border_width):
     fill_size = square_size - border_width * 2
@@ -90,8 +90,28 @@ class Cell():
     def get_surrounding_mines(self):
         return self.__surrounding_mines
     
+class Sprites(pygame.sprite.Sprite):
+    def __init__(self, image_path, x, y, width, height):
+        super().__init__()
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image,(width, height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
 
+#mainmenusprites
+mainmenuscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
+mainmenu_sprites = pygame.sprite.Group()
+mainmenu_sprites.add(mainmenuscreen)
 pygame.init()
+#universally used spites
+generalscreen = Sprites("general_screen.png",0,0,1920,1080)
+universal_sprites = pygame.sprite.Group()
+universal_sprites.add(generalscreen)
+#game screen sprites
+timer = Sprites("timer.png",50,10,50,50)
+mole = Sprites("mole.png",1500,10,50,50)
+gamesprites = pygame.sprite.Group()
+gamesprites.add(timer,mole)
 
 clock = pygame.time.Clock()
 start_ticks = pygame.time.get_ticks()
@@ -120,26 +140,21 @@ while running:
 
     #screen logic
     if current_screen == "main_menu":
-        display.fill(pygame.Color("grey"))
+        
+        mainmenu_sprites.draw(display)
 
         big_font = pygame.font.SysFont("Roman", 70)
         small_font = pygame.font.SysFont("Roman", 36)
         instruction_font = pygame.font.SysFont("Arial", 30)
 
-        title_surface = big_font.render("FARMSWEEPER", True, (0, 0, 0))
-        display.blit(title_surface, (10, 10))
+        instruction_text = instruction_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
+        display.blit(instruction_text, (800, 1000))
 
-        sub_title_surface = small_font.render("Discover all the cells free of the moles to win the game!", True, (0, 0, 0))
-        display.blit(sub_title_surface, (10, 100))
-
-        instruction_text = instruction_font.render("PRESS (ENTER) TO PLAY GAME AS GUEST", True, (0, 0, 0))
-        display.blit(instruction_text, (650, 1000))
-
-        login_text = big_font.render("(1)LOGIN", True, (0, 0, 0))
-        display.blit(login_text, (10, 400))
+        login_text = big_font.render("1.LOGIN", True, (255, 255, 255))
+        display.blit(login_text, (150, 500))
         
-        quit_text = big_font.render("(2)QUIT", True, (0, 0, 0))
-        display.blit(quit_text, (10, 600))
+        quit_text = big_font.render("2.QUIT", True, (255, 255, 255))
+        display.blit(quit_text, (150, 600))
         
         if key_press[pygame.K_1]:
             current_screen = "log_in"
@@ -150,8 +165,7 @@ while running:
 
     elif current_screen == "log_in":
         textinput.update(list_of_events)
-        display.fill(pygame.Color("grey"))
-
+        universal_sprites.draw(display)
         big_font = pygame.font.SysFont("Roman", 36)
         
         title_surface = big_font.render("Login:", True, (0, 0, 0))
@@ -164,7 +178,7 @@ while running:
                 current_screen = "game"
 
         
-        display.fill(pygame.Color("grey"))
+        universal_sprites.draw(display)
 
         big_font = pygame.font.SysFont("Roman", 36)
     
@@ -233,22 +247,24 @@ while running:
                         
 
 
-        display.fill(pygame.Color("grey"))
+        universal_sprites.draw(display)
+        gamesprites.draw(display)
 
         elapsed_time = (pygame.time.get_ticks() - start_ticks) // 1000
         minutes = elapsed_time // 60
         seconds = elapsed_time % 60
-        
-        timer_text = f"Timer: {minutes:02}:{seconds:02}"
-        rendered_timer_text = wording_font.render(timer_text, False, (0, 0, 0))
-        display.blit(rendered_timer_text, (100, 250))
 
-        title_surface = wording_font.render("Farmsweeper", False, (0, 0, 0))
-        display.blit(title_surface, (0, 0))
+        timer_text = f"{minutes:02}:{seconds:02}"
+        rendered_timer_text = wording_font.render(timer_text, False, (0, 0, 0))
+        display.blit(rendered_timer_text, (110,10))
         
-        free_cells_text = f"Free Cells: {free_cells}"
+        free_cells_text = f"FREE CELLS: {free_cells}"
         free_cells_surface = wording_font.render(free_cells_text, False, (0,0,0))
-        display.blit(free_cells_surface, (100, 450))
+        display.blit(free_cells_surface, (600, 10))
+
+        moles_remaining_text = f"MOLES: {number_of_mines}"
+        moles_remaining_text_surface = wording_font.render(moles_remaining_text, False, (0,0,0))
+        display.blit(moles_remaining_text_surface, (1560, 10))
 
         for row in range(number_of_rows):
             for column in range(number_of_columns):
