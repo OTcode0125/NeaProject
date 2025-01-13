@@ -42,6 +42,7 @@ def random_mine_placement(cell_data, total_cells, number_of_columns, number_of_m
         row = pos // number_of_columns
         column = pos % number_of_columns
         cell_data[row][column].set_is_mine()
+        
 
 class Cell():
     def __init__(self):
@@ -79,7 +80,7 @@ class Cell():
         if self.is_mine():
             self.set_color(pygame.Color("black"))  # Mark mine cell
         else:
-            self.set_color(pygame.Color("red"))
+            self.set_color(pygame.Color("grey"))
     
     def is_revealed(self):
         return self.__is_revealed
