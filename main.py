@@ -118,6 +118,11 @@ gamesprites.add(generalscreen,timer,mole)
 display = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Minesweeper")
 
+#mainmenusprites
+'''mainmenuscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
+mainmenu_sprites = pygame.sprite.Group()
+mainmenu_sprites.add(mainmenuscreen)'''
+
 cell_data = []
 for row in range(number_of_rows):
     cell_data.append([])
