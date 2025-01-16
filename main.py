@@ -7,8 +7,7 @@ pygame.init()
 display = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Farmsweeper")
 clock = pygame.time.Clock()
-
-current_screen = "main_menu"
+current_screen = "initial_screen"
 running = True
 
 number_of_columns = 20
@@ -21,6 +20,8 @@ starting_position_y = 190
 number_of_mines = 50
 total_cells = number_of_columns*number_of_rows
 free_cells = total_cells-number_of_mines
+logintext = pygame_textinput.TextInputVisualizer()
+passwordtext = pygame_textinput.TextInputVisualizer()
 
 
 pygame.font.init()
@@ -43,7 +44,6 @@ def random_mine_placement(cell_data, total_cells, number_of_columns, number_of_m
         column = pos % number_of_columns
         cell_data[row][column].set_is_mine()
         
-
 class Cell():
     def __init__(self):
         self.__color = pygame.Color("white")
@@ -100,22 +100,20 @@ class Sprites(pygame.sprite.Sprite):
         self.rect.topleft = (x,y)
 
 #mainmenusprites
-mainmenuscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
-mainmenu_sprites = pygame.sprite.Group()
-mainmenu_sprites.add(mainmenuscreen)
+initialscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
+esc = Sprites("esc.png",10,10, 100,100)
+initialscreen_sprites = pygame.sprite.Group()
+initialscreen_sprites.add(initialscreen, esc)
 pygame.init()
 #universally used spites
 generalscreen = Sprites("general_screen.png",0,0,1920,1080)
 universal_sprites = pygame.sprite.Group()
-universal_sprites.add(generalscreen)
+universal_sprites.add(generalscreen,esc)
 #game screen sprites
 timer = Sprites("timer.png",50,10,50,50)
 mole = Sprites("mole.png",1500,10,50,50)
 gamesprites = pygame.sprite.Group()
-gamesprites.add(timer,mole)
-
-clock = pygame.time.Clock()
-start_ticks = pygame.time.get_ticks()
+gamesprites.add(generalscreen,timer,mole)
 
 display = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Minesweeper")
@@ -128,7 +126,6 @@ for row in range(number_of_rows):
 
 random_mine_placement(cell_data, total_cells,number_of_columns, number_of_mines)
 
-textinput = pygame_textinput.TextInputVisualizer()
 #loop
 while running:
     list_of_events = []
@@ -140,61 +137,95 @@ while running:
     key_press = pygame.key.get_pressed()
 
     #screen logic
-    if current_screen == "main_menu":
+    if current_screen == "initial_screen":
         
-        mainmenu_sprites.draw(display)
+        initialscreen_sprites.draw(display)
 
-        big_font = pygame.font.SysFont("Roman", 70)
-        small_font = pygame.font.SysFont("Roman", 36)
-        instruction_font = pygame.font.SysFont("Arial", 30)
+        instruction_text = wording_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
+        display.blit(instruction_text, (600, 1000))
 
-        instruction_text = instruction_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
-        display.blit(instruction_text, (800, 1000))
+        if key_press[pygame.K_ESCAPE]:
+            running = False
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                current_screen = "main_menu"
 
-        login_text = big_font.render("1.LOGIN", True, (255, 255, 255))
-        display.blit(login_text, (150, 500))
+    elif current_screen == "main_menu":
+
+        universal_sprites.draw(display)
+
+        main_menu_text = wording_font.render("MAIN MENU SCREEN", True, (0,0,0))
+        display.blit(main_menu_text,(650,10))
+
+        login_text = wording_font.render("PRESS 1 (LOGIN)", True, (255,255,255))
+        display.blit(login_text,(150,300))
         
-        quit_text = big_font.render("2.QUIT", True, (255, 255, 255))
-        display.blit(quit_text, (150, 600))
-        
+        tutorial_text = wording_font.render("PRESS 2 (TUTORIAL)", True, (255,255,255))
+        display.blit(tutorial_text,(150,450))
+
+        play_as_guest = wording_font.render("PRESS (ENTER) TO PLAY AS GUEST", True, (0,0,0))
+        display.blit(play_as_guest, (500,1000))
         if key_press[pygame.K_1]:
             current_screen = "log_in"
-        elif key_press[pygame.K_2]:
+        if key_press[pygame.K_ESCAPE]:
             running = False
-        elif key_press[pygame.K_RETURN]:
-            current_screen = "choose_difficulty"
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                current_screen = "choose_difficulty"
+        
 
     elif current_screen == "log_in":
-        textinput.update(list_of_events)
+        logintext.update(list_of_events)
+        passwordtext.update(list_of_events)
+        
         universal_sprites.draw(display)
         big_font = pygame.font.SysFont("Roman", 36)
         
         title_surface = big_font.render("Login:", True, (0, 0, 0))
         display.blit(title_surface, (10, 10))
 
-        display.blit(textinput.surface, (500,500))
+        display.blit(logintext.surface, (500,500))
+        display.blit(passwordtext.surface, (500,600))
+        if key_press[pygame.K_ESCAPE]:
+            running = False
+    
     elif current_screen == "choose_difficulty":
+        universal_sprites.draw(display)
+        
+        easy_selection_text = wording_font.render("PRESS(1) FOR EASY", True, (255,255,255))
+        display.blit(easy_selection_text,(150,300))
+
+        hard_selection_text = wording_font.render("PRESS(2) FOR HARD", True, (255,255,255))
+        display.blit(hard_selection_text,(150,400))
+        
         for event in list_of_events:
+            #note potential exception handling 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 current_screen = "game"
-
-        
+        if key_press[pygame.K_ESCAPE]:
+            running = False
+    
+    elif current_screen == "lose":
         universal_sprites.draw(display)
 
-        big_font = pygame.font.SysFont("Roman", 36)
-    
-        title_surface = big_font.render("Difficulty:", True, (0, 0, 0))
-        display.blit(title_surface, (10, 10))
+        you_lost_text = wording_font.render("YOU LOST", True, (0,0,0))
+        display.blit(you_lost_text,(750,200))
+        if key_press[pygame.K_ESCAPE]:
+            running = False
+
 
     elif current_screen == "game":
+        #if statement ensures that start ticks begin once game screen is initialised 
+        if 'start_ticks' not in locals():
+            start_ticks = pygame.time.get_ticks()
         for event in list_of_events:
-            # Click control
+            #clicking controls
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_click_x, mouse_click_y = getting_mouse_position()
                 row = (mouse_click_y - starting_position_y) // square_size
                 column = (mouse_click_x - starting_position_x) // square_size
                 if 0 <= row < number_of_rows and 0 <= column < number_of_columns:
-                    # Right click
+                    #right click
                     if event.button == 3:
                         if not cell_data[row][column].is_revealed():
                             if not cell_data[row][column].is_flag():
@@ -203,7 +234,7 @@ while running:
                             else:
                                 cell_data[row][column].set_flag(False)
                                 cell_data[row][column].set_color(pygame.Color("white"))
-                    # Left click DOCUMENT EXCEPTION HANDLING WITH FREE_CELLS
+                    #Left click DOCUMENT EXCEPTION HANDLING WITH FREE_CELLS
                     elif event.button == 1:
                         if not cell_data[row][column].is_revealed() and not cell_data[row][column].is_flag():
                             cell_data[row][column].reveal()
@@ -236,10 +267,13 @@ while running:
                                     surrounding_mines += 1
                                 cell_data[row][column].set_surrounding_mines(surrounding_mines)
                             else:
-                                print("You died")
+                                current_screen = "lose"
                             
                             if free_cells == 0:
                                 print("CONGRATS! YOU BEAT THE MOLES")
+        
+        if key_press[pygame.K_ESCAPE]:
+            running = False
 
 
                             
@@ -248,7 +282,7 @@ while running:
                         
 
 
-        universal_sprites.draw(display)
+
         gamesprites.draw(display)
 
         elapsed_time = (pygame.time.get_ticks() - start_ticks) // 1000
@@ -261,11 +295,14 @@ while running:
         
         free_cells_text = f"FREE CELLS: {free_cells}"
         free_cells_surface = wording_font.render(free_cells_text, False, (0,0,0))
-        display.blit(free_cells_surface, (600, 10))
+        display.blit(free_cells_surface, (700, 10))
 
         moles_remaining_text = f"MOLES: {number_of_mines}"
         moles_remaining_text_surface = wording_font.render(moles_remaining_text, False, (0,0,0))
         display.blit(moles_remaining_text_surface, (1560, 10))
+
+        quit_text = wording_font.render("PRESS (ESC) TO QUIT", False, (0,0,0))
+        display.blit(quit_text,(650,1000))
 
         for row in range(number_of_rows):
             for column in range(number_of_columns):
