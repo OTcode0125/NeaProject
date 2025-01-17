@@ -22,7 +22,7 @@ total_cells = number_of_columns*number_of_rows
 free_cells = total_cells-number_of_mines
 logintext = pygame_textinput.TextInputVisualizer()
 passwordtext = pygame_textinput.TextInputVisualizer()
-
+current_input_choice = "login"
 
 pygame.font.init()
 wording_font = pygame.font.Font("bubble_font.ttf", 50)
@@ -99,6 +99,8 @@ class Sprites(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x,y)
 
+
+    
 #mainmenusprites
 initialscreen = Sprites("main_menu_screen.png", 0,0, 1920,1080)
 esc = Sprites("esc.png",10,10, 100,100)
@@ -149,12 +151,13 @@ while running:
         instruction_text = wording_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
         display.blit(instruction_text, (600, 1000))
 
-        if key_press[pygame.K_ESCAPE]:
-            running = False
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 current_screen = "main_menu"
-
+#main menu screen
     elif current_screen == "main_menu":
 
         universal_sprites.draw(display)
@@ -178,45 +181,78 @@ while running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 current_screen = "choose_difficulty"
         
-
+#login screen
     elif current_screen == "log_in":
-        logintext.update(list_of_events)
-        passwordtext.update(list_of_events)
+        list_of_text_events = []
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN:
+                if event.key != pygame.K_TAB:
+                    list_of_text_events.append(event)
+                else:
+                    #pressing tab changes from login to password visa versa
+                    if current_input_choice == "login":
+                        current_input_choice = "password"
+                    elif current_input_choice == "password":
+                        current_input_choice = "login"
+        if current_input_choice == "login":
+            logintext.update(list_of_text_events)
+        
+        elif current_input_choice == "password":
+            passwordtext.update(list_of_text_events)
         
         universal_sprites.draw(display)
-        big_font = pygame.font.SysFont("Roman", 36)
         
-        title_surface = big_font.render("Login:", True, (0, 0, 0))
-        display.blit(title_surface, (10, 10))
+        title_surface = wording_font.render("LOGIN SCREEN", True, (0, 0, 0))
+        display.blit(title_surface, (700, 10))
 
         display.blit(logintext.surface, (500,500))
         display.blit(passwordtext.surface, (500,600))
         if key_press[pygame.K_ESCAPE]:
             running = False
-    
+
     elif current_screen == "choose_difficulty":
         universal_sprites.draw(display)
         
-        easy_selection_text = wording_font.render("PRESS(1) FOR EASY", True, (255,255,255))
-        display.blit(easy_selection_text,(150,300))
+        easy_selection_text = wording_font.render("PRESS (1) FOR EASY", True, (255, 255, 255))
+        display.blit(easy_selection_text, (150, 300))
 
-        hard_selection_text = wording_font.render("PRESS(2) FOR HARD", True, (255,255,255))
-        display.blit(hard_selection_text,(150,400))
-        
+        hard_selection_text = wording_font.render("PRESS (2) FOR HARD", True, (255, 255, 255))
+        display.blit(hard_selection_text, (150, 400))
+
         for event in list_of_events:
-            #note potential exception handling 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                current_screen = "game"
+            if event.type == pygame.KEYDOWN:
+#easy difficulty
+                if event.key == pygame.K_1:
+                    number_of_columns //= 2
+                    number_of_rows //= 2
+                    number_of_mines //= 2
+                    square_size *= 2
+                    
+                    #having to reinitialse cell data so that the variables can change
+                    cell_data = []
+                    for row in range(number_of_rows):
+                        cell_data.append([])
+                        for column in range(number_of_columns):
+                            cell_data[row].append(Cell())
+                    
+                    random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
+                    current_screen = "game"
+#hard difficulty
+                elif event.key == pygame.K_2:
+                    current_screen = "game"
         if key_press[pygame.K_ESCAPE]:
             running = False
+        
+
     
     elif current_screen == "lose":
         universal_sprites.draw(display)
 
         you_lost_text = wording_font.render("YOU LOST", True, (0,0,0))
         display.blit(you_lost_text,(750,200))
-        if key_press[pygame.K_ESCAPE]:
-            running = False
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                current_screen = "initial_screen"
 
 
     elif current_screen == "game":
@@ -277,8 +313,9 @@ while running:
                             if free_cells == 0:
                                 print("CONGRATS! YOU BEAT THE MOLES")
         
-        if key_press[pygame.K_ESCAPE]:
-            running = False
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                current_screen = "initial_screen"
 
 
                             
