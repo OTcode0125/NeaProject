@@ -43,6 +43,27 @@ def random_mine_placement(cell_data, total_cells, number_of_columns, number_of_m
         row = pos // number_of_columns
         column = pos % number_of_columns
         cell_data[row][column].set_is_mine()
+
+def init_game():
+    global cell_data, number_of_columns, number_of_rows, number_of_mines, free_cells, total_cells
+
+    #reset grid variables
+    number_of_columns = 20
+    number_of_rows = 20
+    number_of_mines = 50
+    total_cells = number_of_columns * number_of_rows
+    free_cells = total_cells - number_of_mines
+
+    #re init grid
+    cell_data = []
+    for row in range(number_of_rows):
+        cell_data.append([])
+        for column in range(number_of_columns):
+            cell_data[row].append(Cell())
+
+    #random mine placement
+    random_mine_placement(cell_data, total_cells, number_of_columns, number_of_mines)
+
         
 class Cell():
     def __init__(self):
@@ -145,7 +166,7 @@ while running:
 
     #screen logic
     if current_screen == "initial_screen":
-        
+        init_game()
         initialscreen_sprites.draw(display)
 
         instruction_text = wording_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
@@ -223,22 +244,18 @@ while running:
             if event.type == pygame.KEYDOWN:
 #easy difficulty
                 if event.key == pygame.K_1:
-                    number_of_columns //= 2
-                    number_of_rows //= 2
-                    number_of_mines //= 2
-                    square_size *= 2
-                    
                     #having to reinitialse cell data so that the variables can change
-                    cell_data = []
-                    for row in range(number_of_rows):
-                        cell_data.append([])
-                        for column in range(number_of_columns):
-                            cell_data[row].append(Cell())
-                    
+                    init_game()
+                    number_of_columns = 10
+                    number_of_rows = 10
+                    number_of_mines = 25
+                    square_size = 70
+
                     random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
                     current_screen = "game"
 #hard difficulty
                 elif event.key == pygame.K_2:
+                    init_game
                     current_screen = "game"
         if key_press[pygame.K_ESCAPE]:
             running = False
