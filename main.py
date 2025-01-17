@@ -255,7 +255,7 @@ while running:
                     current_screen = "game"
 #hard difficulty
                 elif event.key == pygame.K_2:
-                    init_game
+                    init_game()
                     current_screen = "game"
         if key_press[pygame.K_ESCAPE]:
             running = False
