@@ -50,7 +50,7 @@ def init_game():
     #reset grid variables
     number_of_columns = 20
     number_of_rows = 20
-    number_of_mines = 50
+    number_of_mines = 30
     total_cells = number_of_columns * number_of_rows
     free_cells = total_cells - number_of_mines
 
@@ -64,7 +64,6 @@ def init_game():
     #random mine placement
     random_mine_placement(cell_data, total_cells, number_of_columns, number_of_mines)
 
-        
 class Cell():
     def __init__(self):
         self.__color = pygame.Color("white")
@@ -198,6 +197,8 @@ while running:
             current_screen = "log_in"
         if key_press[pygame.K_ESCAPE]:
             running = False
+        if key_press[pygame.K_2]:
+            current_screen = "tutorial"
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 current_screen = "choose_difficulty"
@@ -226,10 +227,28 @@ while running:
         title_surface = wording_font.render("LOGIN SCREEN", True, (0, 0, 0))
         display.blit(title_surface, (700, 10))
 
-        display.blit(logintext.surface, (500,500))
-        display.blit(passwordtext.surface, (500,600))
+        title_surface = wording_font.render("PRESS (TAB)TO SWAP BETWEEN USERNAME AND PASSWORD", True, (0, 0, 0))
+        display.blit(title_surface, (100, 1000))
+
+        username_text_surface = wording_font.render("Enter Username:", True, (0,0,0))
+        display.blit(username_text_surface,(300,400))
+
+        password_text_surface = wording_font.render("Enter Password", True, (0,0,0))
+        display.blit(username_text_surface,(300,500))
+
+
+        display.blit(logintext.surface, (850,420))
+        display.blit(passwordtext.surface, (850,520))
         if key_press[pygame.K_ESCAPE]:
             running = False
+    
+    elif current_screen == "tutorial":
+        universal_sprites.draw(display)
+
+        if key_press[pygame.K_ESCAPE]:
+            current_screen = "initial_screen"
+
+
 
     elif current_screen == "choose_difficulty":
         universal_sprites.draw(display)
@@ -256,6 +275,12 @@ while running:
 #hard difficulty
                 elif event.key == pygame.K_2:
                     init_game()
+                    number_of_columns = 20
+                    number_of_rows = 20
+                    number_of_mines = 50
+                    square_size = 35
+                    random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
+                    
                     current_screen = "game"
         if key_press[pygame.K_ESCAPE]:
             running = False
@@ -267,6 +292,10 @@ while running:
 
         you_lost_text = wording_font.render("YOU LOST", True, (0,0,0))
         display.blit(you_lost_text,(750,200))
+
+        score = wording_font.render(f"SCORE: {minutes}{seconds}", True, (0,0,0))
+        display.blit(score,(750,300))
+        
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 current_screen = "initial_screen"
@@ -324,6 +353,7 @@ while running:
                                 if row > 0 and column < number_of_columns-1 and cell_data[row-1][column+1].is_mine():
                                     surrounding_mines += 1
                                 cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                            
                             else:
                                 current_screen = "lose"
                             
