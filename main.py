@@ -64,6 +64,10 @@ def init_game():
     #random mine placement
     random_mine_placement(cell_data, total_cells, number_of_columns, number_of_mines)
 
+def read_tutorial_txt_files(file_path):
+    with open(file_path,"r") as file:
+        return file.readlines()
+    
 class Cell():
     def __init__(self):
         self.__color = pygame.Color("white")
@@ -244,6 +248,21 @@ while running:
     
     elif current_screen == "tutorial":
         universal_sprites.draw(display)
+
+        tut_welcome_text = wording_font.render("WELCOME TO THE TUTORIAL", True, (0,0,0))
+        display.blit(tut_welcome_text,(500,10))
+
+        tutorial_text_1 = read_tutorial_txt_files("tut.txt")
+
+        tutorial_txt_x_pos = 100
+        tutorial_txt_y_pos = 200
+        space_between_lines = 5
+
+        for line in tutorial_text_1:
+            rendered_line = wording_font.render(line.strip(), True, (0,0,0))
+            display.blit(rendered_line, (tutorial_txt_x_pos, tutorial_txt_y_pos))
+            tutorial_txt_y_pos += space_between_lines
+
 
         if key_press[pygame.K_ESCAPE]:
             current_screen = "initial_screen"
