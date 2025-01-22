@@ -212,7 +212,9 @@ while running:
         list_of_text_events = []
         for event in list_of_events:
             if event.type == pygame.KEYDOWN:
-                if event.key != pygame.K_TAB:
+                if event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL:
+                    current_screen = "create_login"
+                elif event.key != pygame.K_TAB:
                     list_of_text_events.append(event)
                 else:
                     #pressing tab changes from login to password visa versa
@@ -240,11 +242,106 @@ while running:
         password_text_surface = wording_font.render("Enter Password", True, (0,0,0))
         display.blit(username_text_surface,(300,500))
 
+        create_account_text = wording_font.render("PRESS (*) TO CREATE A NEW ACCOUNT", True, (0, 0, 0))
+        display.blit(create_account_text, (600, 800))
+
 
         display.blit(logintext.surface, (850,420))
         display.blit(passwordtext.surface, (850,520))
+        
         if key_press[pygame.K_ESCAPE]:
             running = False
+
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                entered_username = logintext.value.strip()
+                entered_password = passwordtext.value.strip()
+
+                #open txt file
+                try:
+                    with open("users.txt", "r") as file:
+                        valid_credentials = False
+                        for line in file:
+                            username, password = line.strip().split(":")
+                            if entered_username == username and entered_password == password:
+                                valid_credentials = True
+                                break
+
+                    if valid_credentials:
+                        current_screen = "logged_in_screen"
+                    else:
+                        print("failed_log_in_screen")
+
+                except FileNotFoundError:
+                    print("Error: User data file not found.")
+
+
+    elif current_screen == "logged_in_screen":
+        universal_sprites.draw(display)
+
+        logged_in_text = wording_font.render(f"HEY {username} YOU ARE LOGGED IN", True,(0,0,0))
+        display.blit(logged_in_text,(400,10))
+
+        proceed_text = wording_font.render("PRESS (ENTER) TO PROCEED TO DIFFICULTY SCREEN", True,(0,0,0))
+        display.blit(proceed_text,(200,1000))
+
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                current_screen = "choose_difficulty"
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                current_screen = "initial_screen"
+    
+    elif current_screen == "create_login":
+        list_of_text_events = []
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key != pygame.K_TAB:
+                list_of_text_events.append(event)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
+                current_input_choice = "password" if current_input_choice == "login" else "login"
+
+        if current_input_choice == "login":
+            logintext.update(list_of_text_events)
+        elif current_input_choice == "password":
+            passwordtext.update(list_of_text_events)
+
+        universal_sprites.draw(display)
+        
+        title_surface = wording_font.render("CREATE NEW ACCOUNT", True, (0, 0, 0))
+        display.blit(title_surface, (700, 10))
+
+        title_surface = wording_font.render("PRESS (TAB) TO SWAP BETWEEN USERNAME AND PASSWORD", True, (0, 0, 0))
+        display.blit(title_surface, (100, 1000))
+
+        username_text_surface = wording_font.render("Enter New Username:", True, (0, 0, 0))
+        display.blit(username_text_surface, (300, 400))
+
+        password_text_surface = wording_font.render("Enter New Password:", True, (0, 0, 0))
+        display.blit(password_text_surface, (300, 500))
+
+        display.blit(logintext.surface, (950, 420))
+        display.blit(passwordtext.surface, (950, 520))
+
+        if key_press[pygame.K_ESCAPE]:
+            running = False
+
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                new_username = logintext.value.strip()
+                new_password = passwordtext.value.strip()
+#making sure the input not empty 
+                if new_username and new_password:
+                    try:
+                        with open("users.txt", "a") as file:
+                            file.write(f"\n{new_username}:{new_password}\n")
+                        print(f"Account created successfully for user: {new_username}")
+                        current_screen = "log_in"
+                    except Exception as e:
+                        print(f"Error saving new account: {e}")
+                else:
+                    print("Error: Username and password cannot be empty.")
+
+
+        
     
     elif current_screen == "tutorial":
         universal_sprites.draw(display)
@@ -301,8 +398,10 @@ while running:
                     random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
                     
                     current_screen = "game"
-        if key_press[pygame.K_ESCAPE]:
-            running = False
+        
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                current_screen = "initial_screen"
         
 
     
