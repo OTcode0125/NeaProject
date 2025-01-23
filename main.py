@@ -23,6 +23,7 @@ free_cells = total_cells-number_of_mines
 logintext = pygame_textinput.TextInputVisualizer()
 passwordtext = pygame_textinput.TextInputVisualizer()
 current_input_choice = "login"
+game_over = False
 
 pygame.font.init()
 wording_font = pygame.font.Font("bubble_font.ttf", 50)
@@ -222,6 +223,7 @@ while running:
                         current_input_choice = "password"
                     elif current_input_choice == "password":
                         current_input_choice = "login"
+        
         if current_input_choice == "login":
             logintext.update(list_of_text_events)
         
@@ -233,17 +235,14 @@ while running:
         title_surface = wording_font.render("LOGIN SCREEN", True, (0, 0, 0))
         display.blit(title_surface, (700, 10))
 
-        title_surface = wording_font.render("PRESS (TAB)TO SWAP BETWEEN USERNAME AND PASSWORD", True, (0, 0, 0))
-        display.blit(title_surface, (100, 1000))
-
         username_text_surface = wording_font.render("Enter Username:", True, (0,0,0))
         display.blit(username_text_surface,(300,400))
 
         password_text_surface = wording_font.render("Enter Password", True, (0,0,0))
         display.blit(username_text_surface,(300,500))
 
-        create_account_text = wording_font.render("PRESS (*) TO CREATE A NEW ACCOUNT", True, (0, 0, 0))
-        display.blit(create_account_text, (600, 800))
+        create_account_text = wording_font.render("PRESS (CTRL) TO CREATE A NEW ACCOUNT", True, (0, 0, 0))
+        display.blit(create_account_text, (300, 1000))
 
 
         display.blit(logintext.surface, (850,420))
@@ -270,7 +269,7 @@ while running:
                     if valid_credentials:
                         current_screen = "logged_in_screen"
                     else:
-                        print("failed_log_in_screen")
+                        current_screen = "failed_login"
 
                 except FileNotFoundError:
                     print("Error: User data file not found.")
@@ -313,10 +312,10 @@ while running:
         display.blit(title_surface, (100, 1000))
 
         username_text_surface = wording_font.render("Enter New Username:", True, (0, 0, 0))
-        display.blit(username_text_surface, (300, 400))
+        display.blit(username_text_surface, (230, 400))
 
         password_text_surface = wording_font.render("Enter New Password:", True, (0, 0, 0))
-        display.blit(password_text_surface, (300, 500))
+        display.blit(password_text_surface, (230, 500))
 
         display.blit(logintext.surface, (950, 420))
         display.blit(passwordtext.surface, (950, 520))
@@ -332,8 +331,7 @@ while running:
                 if new_username and new_password:
                     try:
                         with open("users.txt", "a") as file:
-                            file.write(f"\n{new_username}:{new_password}\n")
-                        print(f"Account created successfully for user: {new_username}")
+                            file.write(f"\n{new_username}:{new_password}")
                         current_screen = "log_in"
                     except Exception as e:
                         print(f"Error saving new account: {e}")
@@ -385,7 +383,8 @@ while running:
                     number_of_rows = 10
                     number_of_mines = 25
                     square_size = 70
-
+                    game_over = False
+                    start_ticks = pygame.time.get_ticks()
                     random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
                     current_screen = "game"
 #hard difficulty
@@ -395,8 +394,9 @@ while running:
                     number_of_rows = 20
                     number_of_mines = 50
                     square_size = 35
+                    game_over = False
+                    start_ticks = pygame.time.get_ticks()
                     random_mine_placement(cell_data, number_of_columns * number_of_rows, number_of_columns, number_of_mines)
-                    
                     current_screen = "game"
         
         for event in list_of_events:
@@ -410,19 +410,28 @@ while running:
 
         you_lost_text = wording_font.render("YOU LOST", True, (0,0,0))
         display.blit(you_lost_text,(750,200))
-
-        score = wording_font.render(f"SCORE: {minutes}{seconds}", True, (0,0,0))
-        display.blit(score,(750,300))
         
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                current_screen = "initial_screen"
+    
+    elif current_screen == "win":
+        universal_sprites.draw(display)
+
+        you_won_text = wording_font.render("YOU WON THE GAME!", True, (0,0,0))
+        display.blit(you_won_text,(750,200))
+
+        score = timer_text
+        score_rendered_text = wording_font.render(f"SCORE: {score}", True, (0,0,0))
+        display.blit(score_rendered_text,(800,400))
+
+
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 current_screen = "initial_screen"
 
 
     elif current_screen == "game":
-        #if statement ensures that start ticks begin once game screen is initialised 
-        if 'start_ticks' not in locals():
-            start_ticks = pygame.time.get_ticks()
         for event in list_of_events:
             #clicking controls
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -473,28 +482,31 @@ while running:
                                 cell_data[row][column].set_surrounding_mines(surrounding_mines)
                             
                             else:
+                                game_over = True
                                 current_screen = "lose"
-                            
                             if free_cells == 0:
-                                print("CONGRATS! YOU BEAT THE MOLES")
+                                game_over = True 
+                                current_scren = "win"
+                                
         
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 current_screen = "initial_screen"
+                game_over = True
+        
+        if game_over:
+            elapsed_time = 0
+            minutes = 0
+            seconds = 0
+
+        else:
+            elapsed_time = (pygame.time.get_ticks() - start_ticks) // 1000
+            minutes = elapsed_time // 60
+            seconds = elapsed_time % 60
 
 
                             
-                        
-                        
-                        
-
-
-
         gamesprites.draw(display)
-
-        elapsed_time = (pygame.time.get_ticks() - start_ticks) // 1000
-        minutes = elapsed_time // 60
-        seconds = elapsed_time % 60
 
         timer_text = f"{minutes:02}:{seconds:02}"
         rendered_timer_text = wording_font.render(timer_text, False, (0, 0, 0))
