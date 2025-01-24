@@ -11,7 +11,7 @@ class Game():
         if difficulty == "easy":
             self.number_of_columns = 10
             self.number_of_rows = 10
-            self.number_of_mines = 25
+            self.number_of_mines = 10
             self.square_size = 70
 
         elif difficulty == "hard":
