@@ -22,6 +22,7 @@ class Window():
         self.logged_in = False
         self.wording_font = pygame.font.Font("bubble_font.ttf", 50)
         self.number_font = pygame.font.SysFont("Roman",30)
+        self.small_wording_font = pygame.font.Font("bubble_font.ttf",25)
         #mainmenusprites
         self.initialscreen = MainMenuSprite("main_menu_screen.png", 0,0, 1920,1080)
         self.esc = MainMenuSprite("esc.png",10,10, 100,100)

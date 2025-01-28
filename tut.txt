@@ -1,1 +1,12 @@
-This is where my tutorial will be
+This game takes gameplay elements from the popular retro game Minesweeper.
+Know what that is?... GREAT! If you need a reminder, keep reading.
+
+
+    1. The game starts once you select your difficulty and go to the game screen
+    2. Left clicking is used to reveal cells on the grid.
+    3. Right clicking is used to flag a cell so you dont mistakenly left click it!
+    4. If you left click, and it comes up with a number, do not worry.
+       This represents how many moles are around that cell.
+    5. If you left click and there is no number, the cells around that are free from moles!
+    6. If you left click on a mole, you lose the game, so click carefully...
+    7. Reveal all of the cells free of a mole to win the game!

@@ -1,5 +1,5 @@
 import pygame
-
+import random
 from window import Window
 
 
@@ -19,6 +19,10 @@ def getting_mouse_position():
     return pygame.mouse.get_pos()
 
 def read_tutorial_txt_files(file_path):
+    with open(file_path,"r") as file:
+        return file.readlines()
+
+def read_help_txt_files(file_path):
     with open(file_path,"r") as file:
         return file.readlines()
 
@@ -205,6 +209,20 @@ while window.running:
                         print(f"Error saving new account: {e}")
                 else:
                     print("Error: Username and password cannot be empty.")
+    
+    elif window.current_screen == "failed_login":
+        window.universal_sprites.draw(display)
+
+        failed_login_text = window.wording_font.render("FAILED TO LOGIN", True, (0,0,0))
+        display.blit(failed_login_text,(400,10))
+
+        press_esc_text = window.wording_font.render("PRESS (ESC) TO RETURN TO INITIAL SCREEN)", True, (0,0,0))
+        display.blit(press_esc_text,(400,1000))
+
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                window.current_screen = "initial_screen"
+
 
 
         
@@ -212,17 +230,17 @@ while window.running:
     elif window.current_screen == "tutorial":
         window.universal_sprites.draw(display)
 
-        tut_welcome_text = window.wording_font.render("WELCOME TO THE TUTORIAL", True, (0,0,0))
+        tut_welcome_text = window.small_wording_font.render("WELCOME TO THE TUTORIAL", True, (0,0,0))
         display.blit(tut_welcome_text,(500,10))
 
         tutorial_text_1 = read_tutorial_txt_files("tut.txt")
 
-        tutorial_txt_x_pos = 100
+        tutorial_txt_x_pos = 200
         tutorial_txt_y_pos = 200
-        space_between_lines = 5
+        space_between_lines = 50
 
         for line in tutorial_text_1:
-            rendered_line = window.wording_font.render(line.strip(), True, (0,0,0))
+            rendered_line = window.small_wording_font.render(line.strip(), True, (0,0,0))
             display.blit(rendered_line, (tutorial_txt_x_pos, tutorial_txt_y_pos))
             tutorial_txt_y_pos += space_between_lines
 
@@ -264,16 +282,31 @@ while window.running:
 
         you_lost_text = window.wording_font.render("YOU LOST", True, (0,0,0))
         display.blit(you_lost_text,(750,200))
+
+        replay_text = window.wording_font.render("PRESS (ENTER) TO REPLAY", True, (0,0,0))
+        display.blit(replay_text,(500,1000))
         
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                window.current_screen = "choose_difficulty"
+        
 
     elif window.current_screen == "lose" and window.logged_in == True:
         window.universal_sprites.draw(display)
 
         you_lost_text = window.wording_font.render("YOU LOST, BUT BECAUSE YOU LOGGED IN... YOU GET RECOMMENDATIONS", True, (0,0,0))
         display.blit(you_lost_text,(50,200))
+        help_lines = read_help_txt_files("help.txt")
+        if help_lines:
+            random_help = random.choice(help_lines).strip()
+            recommendation_text = window.wording_font.render(random_help, True, (0, 0, 0))
+            display.blit(recommendation_text, (50, 300))
+        else:
+            no_recommendations_text = window.wording_font.render("No recommendations available.", True, (0, 0, 0))
+            display.blit(no_recommendations_text, (50, 300))
         
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
