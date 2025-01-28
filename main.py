@@ -22,6 +22,7 @@ def read_tutorial_txt_files(file_path):
     with open(file_path,"r") as file:
         return file.readlines()
 
+
 window = Window()
 
 #loop
@@ -143,6 +144,8 @@ while window.running:
     elif window.current_screen == "logged_in_screen":
         window.universal_sprites.draw(display)
 
+        window.logged_in = True
+
         logged_in_text = window.wording_font.render(f"HEY {username} YOU ARE LOGGED IN", True,(0,0,0))
         display.blit(logged_in_text,(400,10))
 
@@ -256,7 +259,7 @@ while window.running:
         
 
     
-    elif window.current_screen == "lose":
+    elif window.current_screen == "lose" and window.logged_in == False:
         window.universal_sprites.draw(display)
 
         you_lost_text = window.wording_font.render("YOU LOST", True, (0,0,0))
@@ -265,6 +268,17 @@ while window.running:
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
+
+    elif window.current_screen == "lose" and window.logged_in == True:
+        window.universal_sprites.draw(display)
+
+        you_lost_text = window.wording_font.render("YOU LOST, BUT BECAUSE YOU LOGGED IN... YOU GET RECOMMENDATIONS", True, (0,0,0))
+        display.blit(you_lost_text,(50,200))
+        
+        for event in list_of_events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                window.current_screen = "initial_screen"
+
     
     elif window.current_screen == "win":
         window.universal_sprites.draw(display)
