@@ -2,7 +2,7 @@ import pygame
 
 
 pygame.init()
-
+#sprite class
 class Sprites(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y, width, height):
         super().__init__()

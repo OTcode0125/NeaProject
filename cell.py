@@ -2,7 +2,7 @@ import pygame
 
 
 pygame.init()
-
+#cell class is used to control cell behavior on the grid. e.g. set it as a mine or set it as flagged.
 class Cell():
     def __init__(self):
         self.__color = pygame.Color("white")

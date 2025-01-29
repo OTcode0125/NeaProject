@@ -5,7 +5,7 @@ from cell import Cell
 
 
 pygame.init()
-
+#game class used to re-initialise the grid of cells, and allows changing difficulty.
 class Game():
     def __init__(self, difficulty):
         if difficulty == "easy":
@@ -33,7 +33,7 @@ class Game():
         self.place_moles()
         self.first_click = True
 
-        #random mole placement and first click logic
+        #random mole placement and no death on first click
     def place_moles(self, first_click_position=None):
         mole_positions = random.sample(range(self.total_cells), self.number_of_moles)
         
@@ -47,7 +47,7 @@ class Game():
             mole_positions = random.sample(range(self.total_cells), self.number_of_moles)
         
         for pos in mole_positions:
-            #maths behind converting index to a specific cell (document)
+            #maths behind converting index to a specific cell (to document)
             row = pos // self.number_of_columns
             column = pos % self.number_of_columns
             self.cell_data[row][column].set_is_mole()

@@ -9,7 +9,7 @@ pygame.font.init()
 display = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("Farmsweeper")
 clock = pygame.time.Clock()
-
+#func to draw each cell with a border around it
 def draw_square_with_border(border_color, square_color, x, y, square_size, border_width):
     fill_size = square_size - border_width * 2
     pygame.draw.rect(display, border_color, (x, y, square_size, square_size), width=border_width)
@@ -17,7 +17,7 @@ def draw_square_with_border(border_color, square_color, x, y, square_size, borde
 
 def getting_mouse_position():
     return pygame.mouse.get_pos()
-
+#read from txt file of users choice
 def read_tutorial_txt_files(file_path):
     with open(file_path,"r") as file:
         return file.readlines()
@@ -25,7 +25,7 @@ def read_tutorial_txt_files(file_path):
 def read_help_txt_files(file_path):
     with open(file_path,"r") as file:
         return file.readlines()
-
+#used to output text in the exact center screen
 def center_text(display,text,font,color,screen_width,y):
     text_surface = font.render(text,True,color)
     text_rect = text_surface.get_rect(center=(screen_width // 2,y))
@@ -44,7 +44,7 @@ while window.running:
             list_of_events.append(event)
     key_press = pygame.key.get_pressed()
 
-    #screen logic
+    #all screen switching logic
     if window.current_screen == "initial_screen":
         window.initialscreen_sprites.draw(display)
 
@@ -139,7 +139,7 @@ while window.running:
                 except FileNotFoundError:
                     print("Error: User data file not found.")
 
-
+#logged in screen
     elif window.current_screen == "logged_in_screen":
         window.universal_sprites.draw(display)
 
@@ -153,7 +153,7 @@ while window.running:
                 window.current_screen = "choose_difficulty"
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
-    
+#create login screen
     elif window.current_screen == "create_login":
         list_of_text_events = []
         for event in list_of_events:
@@ -198,7 +198,7 @@ while window.running:
                         print(f"Error saving new account: {e}")
                 else:
                     print("Error: Username and password cannot be empty.")
-    
+#failed login screen   
     elif window.current_screen == "failed_login":
         window.universal_sprites.draw(display)
 
@@ -212,7 +212,7 @@ while window.running:
 
 
         
-    
+#tutorial screen
     elif window.current_screen == "tutorial":
         window.universal_sprites.draw(display)
 
@@ -234,7 +234,7 @@ while window.running:
             window.current_screen = "initial_screen"
 
 
-
+#choose difficulty screen
     elif window.current_screen == "choose_difficulty":
         window.universal_sprites.draw(display)
         
@@ -246,11 +246,11 @@ while window.running:
 
                 if event.key == pygame.K_1:
                     #having to reinitialse cell data so that the variables can change
-                    #easy difficulty
+                    #easy
                     window.new_game("easy")
 
                 elif event.key == pygame.K_2:
-                    #hard difficulty
+                    #hard
                     window.new_game("hard")
 
         for event in list_of_events:
@@ -258,7 +258,7 @@ while window.running:
                 window.current_screen = "initial_screen"
         
 
-    
+#lose not logged in screen
     elif window.current_screen == "lose" and window.logged_in == False:
         window.universal_sprites.draw(display)
 
@@ -272,7 +272,7 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 window.current_screen = "choose_difficulty"
         
-
+#lose and logged in screen
     elif window.current_screen == "lose" and window.logged_in == True:
         window.universal_sprites.draw(display)
 
@@ -292,7 +292,7 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
 
-    
+#win screen
     elif window.current_screen == "win":
         window.universal_sprites.draw(display)
 
@@ -306,7 +306,7 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 current_screen = "initial_screen"
 
-
+#game screen
     elif window.current_screen == "game":
         for event in list_of_events:
             #clicking controls
@@ -395,7 +395,7 @@ while window.running:
 
         quit_text = window.wording_font.render("PRESS (ESC) TO QUIT", False, (0,0,0))
         display.blit(quit_text,(650,1000))
-
+#draws squares with borders, displays surrounding cells and chooses where grid starts
         for row in range(window.game.number_of_rows):
             for column in range(window.game.number_of_columns):
                 cell_x = window.starting_position_x + (window.game.square_size + window.space_between_squares) * column

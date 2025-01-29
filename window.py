@@ -6,7 +6,7 @@ from sprites import MainMenuSprite,UniversalSprite,GameScreenSprite
 
 
 pygame.init()
-
+#window class used for holding aesthetic variables and sprites
 class Window():
     def __init__(self):
         self.border_width = 1
@@ -43,7 +43,7 @@ class Window():
         self.game = None
         self.recommendation_shown = False
         self.selected_recommendation = None
-
+#re-inits new game when difficulty selected by user
     def new_game(self, difficulty):
         self.game = Game(difficulty)
         self.current_screen = "game"
