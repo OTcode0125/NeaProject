@@ -41,6 +41,8 @@ class Window():
 
         self.current_input_choice = "login"
         self.game = None
+        self.recommendation_shown = False
+        self.selected_recommendation = None
 
     def new_game(self, difficulty):
         self.game = Game(difficulty)

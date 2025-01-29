@@ -26,6 +26,11 @@ def read_help_txt_files(file_path):
     with open(file_path,"r") as file:
         return file.readlines()
 
+def center_text(display,text,font,color,screen_width,y):
+    text_surface = font.render(text,True,color)
+    text_rect = text_surface.get_rect(center=(screen_width // 2,y))
+    display.blit(text_surface,text_rect)
+
 
 window = Window()
 
@@ -43,8 +48,7 @@ while window.running:
     if window.current_screen == "initial_screen":
         window.initialscreen_sprites.draw(display)
 
-        instruction_text = window.wording_font.render("PRESS (ENTER) TO START", True, (0, 0, 0))
-        display.blit(instruction_text, (600, 1000))
+        center_text(display,"PRESS (ENTER) TO START",window.wording_font,(0,0,0),1920,1000)
 
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -57,17 +61,11 @@ while window.running:
 
         window.universal_sprites.draw(display)
 
-        main_menu_text = window.wording_font.render("MAIN MENU SCREEN", True, (0,0,0))
-        display.blit(main_menu_text,(650,10))
+        center_text(display,"MAIN MENU SCREEN",window.wording_font,(0,0,0),1920,50)
+        center_text(display,"PRESS (1) TO LOGIN",window.wording_font,(0,0,0),1920,300)
+        center_text(display,"PRESS (2) TUTORIAL",window.wording_font,(0,0,0),1920,450)
+        center_text(display,"PRESS (ENTER) TO PLAY AS GUEST",window.wording_font,(0,0,0),1920,1000)
 
-        login_text = window.wording_font.render("PRESS 1 (LOGIN)", True, (255,255,255))
-        display.blit(login_text,(150,300))
-        
-        tutorial_text = window.wording_font.render("PRESS 2 (TUTORIAL)", True, (255,255,255))
-        display.blit(tutorial_text,(150,450))
-
-        play_as_guest = window.wording_font.render("PRESS (ENTER) TO PLAY AS GUEST", True, (0,0,0))
-        display.blit(play_as_guest, (500,1000))
         if key_press[pygame.K_1]:
             window.current_screen = "log_in"
         if key_press[pygame.K_ESCAPE]:
@@ -102,17 +100,14 @@ while window.running:
         
         window.universal_sprites.draw(display)
         
-        title_surface = window.wording_font.render("LOGIN SCREEN", True, (0, 0, 0))
-        display.blit(title_surface, (700, 10))
+        center_text(display,"LOGIN SCREEN",window.wording_font,(0,0,0),1920,50)
+        center_text(display,"PRESS(CTRL) TO CREATE A NEW ACCOUNT",window.wording_font,(0,0,0),1920,1000)
 
         username_text_surface = window.wording_font.render("Enter Username:", True, (0,0,0))
         display.blit(username_text_surface,(300,400))
 
-        password_text_surface = window.wording_font.render("Enter Password", True, (0,0,0))
+        password_text_surface = window.wording_font.render("Enter Password:", True, (0,0,0))
         display.blit(password_text_surface,(300,500))
-
-        create_account_text = window.wording_font.render("PRESS (CTRL) TO CREATE A NEW ACCOUNT", True, (0, 0, 0))
-        display.blit(create_account_text, (300, 1000))
 
 
         display.blit(window.logintext.surface, (850,420))
@@ -150,11 +145,8 @@ while window.running:
 
         window.logged_in = True
 
-        logged_in_text = window.wording_font.render(f"HEY {username} YOU ARE LOGGED IN", True,(0,0,0))
-        display.blit(logged_in_text,(400,10))
-
-        proceed_text = window.wording_font.render("PRESS (ENTER) TO PROCEED TO DIFFICULTY SCREEN", True,(0,0,0))
-        display.blit(proceed_text,(200,1000))
+        center_text(display,f"HEY {username} YOU ARE LOGGED IN",window.wording_font,(0,0,0),1920,50)
+        center_text(display,"PRESS (ENTER) TO PROCEED TO DIFFICULTY SCREEN",window.wording_font,(0,0,0),1920,1000)
 
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -177,16 +169,13 @@ while window.running:
 
         window.universal_sprites.draw(display)
         
-        title_surface = window.wording_font.render("CREATE NEW ACCOUNT", True, (0, 0, 0))
-        display.blit(title_surface, (700, 10))
+        center_text(display,"CREATE NEW ACCOUNT",window.wording_font,(0,0,0),1920,50)
+        center_text(display,"PRESS (TAB) TO SWAP BETWEEN USERNAME AND PASSWORD",window.wording_font,(0,0,0),1920,1000)
 
-        title_surface = window.wording_font.render("PRESS (TAB) TO SWAP BETWEEN USERNAME AND PASSWORD", True, (0, 0, 0))
-        display.blit(title_surface, (100, 1000))
-
-        username_text_surface = window.wording_font.render("Enter New Username:", True, (0, 0, 0))
+        username_text_surface = window.wording_font.render("Enter New Username:", True, (0,0,0))
         display.blit(username_text_surface, (230, 400))
 
-        password_text_surface = window.wording_font.render("Enter New Password:", True, (0, 0, 0))
+        password_text_surface = window.wording_font.render("Enter New Password:", True, (0,0,0))
         display.blit(password_text_surface, (230, 500))
 
         display.blit(window.logintext.surface, (950, 420))
@@ -213,11 +202,8 @@ while window.running:
     elif window.current_screen == "failed_login":
         window.universal_sprites.draw(display)
 
-        failed_login_text = window.wording_font.render("FAILED TO LOGIN", True, (0,0,0))
-        display.blit(failed_login_text,(400,10))
-
-        press_esc_text = window.wording_font.render("PRESS (ESC) TO RETURN TO INITIAL SCREEN)", True, (0,0,0))
-        display.blit(press_esc_text,(400,1000))
+        center_text(display,"FAILED TO LOGIN",window.wording_font,(0,0,0),1920,50)
+        center_text(display,"PRESS (ESC) TO RETURN TO INITIAL SCREEN",window.wording_font,(0,0,0),1920,1000)
 
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -230,8 +216,7 @@ while window.running:
     elif window.current_screen == "tutorial":
         window.universal_sprites.draw(display)
 
-        tut_welcome_text = window.small_wording_font.render("WELCOME TO THE TUTORIAL", True, (0,0,0))
-        display.blit(tut_welcome_text,(500,10))
+        center_text(display,"WELCOME TO THE TUTORIAL",window.wording_font,(0,0,0),1920,50)
 
         tutorial_text_1 = read_tutorial_txt_files("tut.txt")
 
@@ -253,11 +238,8 @@ while window.running:
     elif window.current_screen == "choose_difficulty":
         window.universal_sprites.draw(display)
         
-        easy_selection_text = window.wording_font.render("PRESS (1) FOR EASY", True, (255, 255, 255))
-        display.blit(easy_selection_text, (150, 300))
-
-        hard_selection_text = window.wording_font.render("PRESS (2) FOR HARD", True, (255, 255, 255))
-        display.blit(hard_selection_text, (150, 400))
+        center_text(display,"PRESS (1) FOR EASY",window.wording_font,(0,0,0),1920,300)
+        center_text(display,"PRESS (2) FOR HARD",window.wording_font,(0,0,0),1920,400)
 
         for event in list_of_events:
             if event.type == pygame.KEYDOWN:
@@ -280,11 +262,8 @@ while window.running:
     elif window.current_screen == "lose" and window.logged_in == False:
         window.universal_sprites.draw(display)
 
-        you_lost_text = window.wording_font.render("YOU LOST", True, (0,0,0))
-        display.blit(you_lost_text,(750,200))
-
-        replay_text = window.wording_font.render("PRESS (ENTER) TO REPLAY", True, (0,0,0))
-        display.blit(replay_text,(500,1000))
+        center_text(display,"YOU LOST",window.wording_font,(0,0,0),1920,200)
+        center_text(display,"PRESS (ENTER) TO REPLAY",window.wording_font,(0,0,0),1920,1000)
         
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -297,17 +276,17 @@ while window.running:
     elif window.current_screen == "lose" and window.logged_in == True:
         window.universal_sprites.draw(display)
 
-        you_lost_text = window.wording_font.render("YOU LOST, BUT BECAUSE YOU LOGGED IN... YOU GET RECOMMENDATIONS", True, (0,0,0))
-        display.blit(you_lost_text,(50,200))
-        help_lines = read_help_txt_files("help.txt")
-        if help_lines:
-            random_help = random.choice(help_lines).strip()
-            recommendation_text = window.wording_font.render(random_help, True, (0, 0, 0))
-            display.blit(recommendation_text, (50, 300))
-        else:
-            no_recommendations_text = window.wording_font.render("No recommendations available.", True, (0, 0, 0))
-            display.blit(no_recommendations_text, (50, 300))
-        
+        center_text(display,"YOU LOST, WHILE LOGGED IN... YOU GET RECOMMENDATIONS",window.wording_font,(0,0,0),1920,200)
+
+        if not window.recommendation_shown:
+            help_lines = read_help_txt_files("help.txt")
+            if help_lines:
+                window.selected_recommendation = random.choice(help_lines).strip()
+            else:
+                window.selected_recommendation = "None Available"
+            window.recommendation_shown = True
+
+        center_text(display,f"{window.selected_recommendation}",window.wording_font,(0,0,0),1920,400)
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
@@ -316,12 +295,10 @@ while window.running:
     elif window.current_screen == "win":
         window.universal_sprites.draw(display)
 
-        you_won_text = window.wording_font.render("YOU WON THE GAME!", True, (0,0,0))
-        display.blit(you_won_text,(750,200))
+        center_text(display,"YOU WON THE GAME",window.wording_font,(0,0,0),1920,200)
 
         score = timer_text
-        score_rendered_text = window.wording_font.render(f"SCORE: {score}", True, (0,0,0))
-        display.blit(score_rendered_text,(800,400))
+        center_text(display,f"SCORE: {score}",window.wording_font,(0,0,0),1920,400)
 
 
         for event in list_of_events:
