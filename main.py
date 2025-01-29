@@ -277,6 +277,7 @@ while window.running:
         window.universal_sprites.draw(display)
 
         center_text(display,"YOU LOST, WHILE LOGGED IN... YOU GET RECOMMENDATIONS",window.wording_font,(0,0,0),1920,200)
+        center_text(display,f"FREE CELLS LEFT:{window.game.free_cells}",window.small_wording_font,(0,0,0),1920,600)
 
         if not window.recommendation_shown:
             help_lines = read_help_txt_files("help.txt")
@@ -286,7 +287,7 @@ while window.running:
                 window.selected_recommendation = "None Available"
             window.recommendation_shown = True
 
-        center_text(display,f"{window.selected_recommendation}",window.wording_font,(0,0,0),1920,400)
+        center_text(display,f"{window.selected_recommendation}",window.small_wording_font,(0,0,0),1920,400)
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
@@ -327,7 +328,7 @@ while window.running:
                     elif event.button == 1:
                         if window.game.first_click:
                             window.game.first_click = False
-                            window.game.place_mines((row, column))
+                            window.game.place_moles((row, column))
                             window.game.cell_data[row][column].reveal()
                             window.game.free_cells -= 1
                         else:
@@ -335,33 +336,33 @@ while window.running:
                             if not window.game.cell_data[row][column].is_revealed() and not window.game.cell_data[row][column].is_flag():
                                 window.game.cell_data[row][column].reveal()
                                 window.game.free_cells -= 1 
-                                if not window.game.cell_data[row][column].is_mine():
-                                    surrounding_mines = 0
+                                if not window.game.cell_data[row][column].is_mole():
+                                    surrounding_moles = 0
                                     #bottom right
-                                    if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mine():
-                                        surrounding_mines += 1
+                                    if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mole():
+                                        surrounding_moles += 1
                                     #bottom left
-                                    if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mine():
-                                        surrounding_mines += 1
+                                    if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mole():
+                                        surrounding_moles += 1
                                     #right
-                                    if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mine():
-                                        surrounding_mines += 1
+                                    if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mole():
+                                        surrounding_moles += 1
                                     #left
-                                    if column >0 and window.game.cell_data[row][column-1].is_mine():
-                                        surrounding_mines += 1
+                                    if column >0 and window.game.cell_data[row][column-1].is_mole():
+                                        surrounding_moles += 1
                                     #below
-                                    if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mine():
-                                        surrounding_mines += 1
+                                    if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mole():
+                                        surrounding_moles += 1
                                     #top
-                                    if row > 0 and window.game.cell_data[row-1][column].is_mine():
-                                        surrounding_mines += 1
+                                    if row > 0 and window.game.cell_data[row-1][column].is_mole():
+                                        surrounding_moles += 1
                                     #top left
-                                    if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mine():
-                                        surrounding_mines += 1
+                                    if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mole():
+                                        surrounding_moles += 1
                                     #top right
-                                    if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mine():
-                                        surrounding_mines += 1
-                                    window.game.cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                                    if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mole():
+                                        surrounding_moles += 1
+                                    window.game.cell_data[row][column].set_surrounding_moles(surrounding_moles)
                                 
                                 else:
                                     window.current_screen = "lose"
@@ -388,7 +389,7 @@ while window.running:
         free_cells_surface = window.wording_font.render(free_cells_text, False, (0,0,0))
         display.blit(free_cells_surface, (700, 10))
 
-        moles_remaining_text = f"MOLES: {window.game.number_of_mines}"
+        moles_remaining_text = f"MOLES: {window.game.number_of_moles}"
         moles_remaining_text_surface = window.wording_font.render(moles_remaining_text, False, (0,0,0))
         display.blit(moles_remaining_text_surface, (1560, 10))
 
@@ -402,10 +403,10 @@ while window.running:
                 cell_color = window.game.cell_data[row][column].get_color()
                 draw_square_with_border(pygame.Color("black"),cell_color,cell_x,cell_y,window.game.square_size,window.border_width)
                 if window.game.cell_data[row][column].is_revealed():
-                    surrounding_mines = window.game.cell_data[row][column].get_surrounding_mines()
-                    if surrounding_mines > 0:
-                        number_of_surrounding_mines_surface = window.number_font.render(str(surrounding_mines), False, (0, 0, 0))
-                        display.blit(number_of_surrounding_mines_surface, (cell_x,cell_y))
+                    surrounding_moles = window.game.cell_data[row][column].get_surrounding_moles()
+                    if surrounding_moles > 0:
+                        number_of_surrounding_moles_surface = window.number_font.render(str(surrounding_moles), False, (0, 0, 0))
+                        display.blit(number_of_surrounding_moles_surface, (cell_x,cell_y))
                     
 
 
