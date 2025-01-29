@@ -348,41 +348,48 @@ while window.running:
                                 window.game.cell_data[row][column].set_color(pygame.Color("white"))
                     #Left click DOCUMENT EXCEPTION HANDLING WITH FREE_CELLS
                     elif event.button == 1:
-                        if not window.game.cell_data[row][column].is_revealed() and not window.game.cell_data[row][column].is_flag():
+                        if window.game.first_click:
+                            window.game.first_click = False
+                            window.game.place_mines((row, column))
                             window.game.cell_data[row][column].reveal()
-                            window.game.free_cells -= 1 
-                            if not window.game.cell_data[row][column].is_mine():
-                                surrounding_mines = 0
-                                #bottom right
-                                if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mine():
-                                    surrounding_mines += 1
-                                #bottom left
-                                if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mine():
-                                    surrounding_mines += 1
-                                #right
-                                if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mine():
-                                    surrounding_mines += 1
-                                #left
-                                if column >0 and window.game.cell_data[row][column-1].is_mine():
-                                    surrounding_mines += 1
-                                #below
-                                if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mine():
-                                    surrounding_mines += 1
-                                #top
-                                if row > 0 and window.game.cell_data[row-1][column].is_mine():
-                                    surrounding_mines += 1
-                                #top left
-                                if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mine():
-                                    surrounding_mines += 1
-                                #top right
-                                if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mine():
-                                    surrounding_mines += 1
-                                window.game.cell_data[row][column].set_surrounding_mines(surrounding_mines)
-                            
-                            else:
-                                window.current_screen = "lose"
-                            if window.game.free_cells == 0:
-                                window.current_scren = "win"
+                            window.game.free_cells -= 1
+                        else:
+
+                            if not window.game.cell_data[row][column].is_revealed() and not window.game.cell_data[row][column].is_flag():
+                                window.game.cell_data[row][column].reveal()
+                                window.game.free_cells -= 1 
+                                if not window.game.cell_data[row][column].is_mine():
+                                    surrounding_mines = 0
+                                    #bottom right
+                                    if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mine():
+                                        surrounding_mines += 1
+                                    #bottom left
+                                    if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mine():
+                                        surrounding_mines += 1
+                                    #right
+                                    if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mine():
+                                        surrounding_mines += 1
+                                    #left
+                                    if column >0 and window.game.cell_data[row][column-1].is_mine():
+                                        surrounding_mines += 1
+                                    #below
+                                    if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mine():
+                                        surrounding_mines += 1
+                                    #top
+                                    if row > 0 and window.game.cell_data[row-1][column].is_mine():
+                                        surrounding_mines += 1
+                                    #top left
+                                    if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mine():
+                                        surrounding_mines += 1
+                                    #top right
+                                    if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mine():
+                                        surrounding_mines += 1
+                                    window.game.cell_data[row][column].set_surrounding_mines(surrounding_mines)
+                                
+                                else:
+                                    window.current_screen = "lose"
+                                if window.game.free_cells == 0:
+                                    window.current_scren = "win"
                                 
         
         for event in list_of_events:

@@ -33,7 +33,7 @@ class Window():
         self.generalscreen = UniversalSprite("general_screen.png",0,0,1920,1080)
         self.universal_sprites = pygame.sprite.Group()
         self.universal_sprites.add(self.generalscreen,self.esc)
-        #game screen sprites
+        #game screen sprites 
         self.timer = GameScreenSprite("timer.png",50,10,50,50)
         self.mole = GameScreenSprite("mole.png",1500,10,50,50)
         self.gamesprites = pygame.sprite.Group()

@@ -31,11 +31,21 @@ class Game():
                 self.cell_data[row].append(Cell())
         
         self.place_mines()
+        self.first_click = True
 
-        #random mine placement
-    def place_mines(self):
+        #random mine placement and first click logic
+    def place_mines(self, first_click_position=None):
         mine_positions = random.sample(range(self.total_cells), self.number_of_mines)
+        
+        if first_click_position:
+            first_click_row, first_click_column = first_click_position
+            mine_positions = random.sample(range(self.total_cells - 1), self.number_of_mines)
+            while (first_click_row * self.number_of_columns + first_click_column) in mine_positions:
+                mine_positions = random.sample(range(self.total_cells - 1), self.number_of_mines) 
 
+        else:
+            mine_positions = random.sample(range(self.total_cells), self.number_of_mines)
+        
         for pos in mine_positions:
             #maths behind converting index to a specific cell (document)
             row = pos // self.number_of_columns
