@@ -1,5 +1,6 @@
 import pygame
 import random
+import hashlib
 from window import Window
 
 
@@ -30,6 +31,13 @@ def center_text(display,text,font,color,screen_width,y):
     text_surface = font.render(text,True,color)
     text_rect = text_surface.get_rect(center=(screen_width // 2,y))
     display.blit(text_surface,text_rect)
+#XOR hashing algorithm
+def hashing(input_string):
+    hash_value = 0
+    for char in input_string:
+        hash_value ^=ord(char)
+        hash_value = (hash_value << 5) | (hash_value >> (32 - 5))
+    return str(hash_value)
 
 
 window = Window()
@@ -120,14 +128,14 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 entered_username = window.logintext.value.strip()
                 entered_password = window.passwordtext.value.strip()
-
+                entered_password_hashed = hashing(entered_password)
                 #open txt file
                 try:
                     with open("users.txt", "r") as file:
                         valid_credentials = False
                         for line in file:
-                            username, password = line.strip().split(":")
-                            if entered_username == username and entered_password == password:
+                            username, stored_hashed_password = line.strip().split(":")
+                            if entered_username == username and entered_password_hashed == stored_hashed_password:
                                 valid_credentials = True
                                 break
 
@@ -188,11 +196,12 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 new_username = window.logintext.value.strip()
                 new_password = window.passwordtext.value.strip()
+                hashed_password = hashing(new_password)
 #making sure the input not empty 
                 if new_username and new_password:
                     try:
                         with open("users.txt", "a") as file:
-                            file.write(f"\n{new_username}:{new_password}")
+                            file.write(f"\n{new_username}:{hashed_password}")
                         window.current_screen = "log_in"
                     except Exception as e:
                         print(f"Error saving new account: {e}")
@@ -329,45 +338,42 @@ while window.running:
                         if window.game.first_click:
                             window.game.first_click = False
                             window.game.place_moles((row, column))
-                            window.game.cell_data[row][column].reveal()
-                            window.game.free_cells -= 1
-                        else:
 
-                            if not window.game.cell_data[row][column].is_revealed() and not window.game.cell_data[row][column].is_flag():
-                                window.game.cell_data[row][column].reveal()
-                                window.game.free_cells -= 1 
-                                if not window.game.cell_data[row][column].is_mole():
-                                    surrounding_moles = 0
-                                    #bottom right
-                                    if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mole():
-                                        surrounding_moles += 1
-                                    #bottom left
-                                    if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mole():
-                                        surrounding_moles += 1
-                                    #right
-                                    if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mole():
-                                        surrounding_moles += 1
-                                    #left
-                                    if column >0 and window.game.cell_data[row][column-1].is_mole():
-                                        surrounding_moles += 1
-                                    #below
-                                    if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mole():
-                                        surrounding_moles += 1
-                                    #top
-                                    if row > 0 and window.game.cell_data[row-1][column].is_mole():
-                                        surrounding_moles += 1
-                                    #top left
-                                    if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mole():
-                                        surrounding_moles += 1
-                                    #top right
-                                    if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mole():
-                                        surrounding_moles += 1
-                                    window.game.cell_data[row][column].set_surrounding_moles(surrounding_moles)
-                                
-                                else:
-                                    window.current_screen = "lose"
-                                if window.game.free_cells == 0:
-                                    window.current_scren = "win"
+                        if not window.game.cell_data[row][column].is_revealed() and not window.game.cell_data[row][column].is_flag():
+                            window.game.cell_data[row][column].reveal()
+                            window.game.free_cells -= 1 
+                            if not window.game.cell_data[row][column].is_mole():
+                                surrounding_moles = 0
+                                #bottom right
+                                if row < window.game.number_of_rows-1 and column < window.game.number_of_columns-1 and window.game.cell_data[row+1][column+1].is_mole():
+                                    surrounding_moles += 1
+                                #bottom left
+                                if row < window.game.number_of_rows-1 and column > 0 and window.game.cell_data[row+1][column-1].is_mole():
+                                    surrounding_moles += 1
+                                #right
+                                if column < window.game.number_of_columns-1 and window.game.cell_data[row][column+1].is_mole():
+                                    surrounding_moles += 1
+                                #left
+                                if column >0 and window.game.cell_data[row][column-1].is_mole():
+                                    surrounding_moles += 1
+                                #below
+                                if row < window.game.number_of_rows-1 and window.game.cell_data[row+1][column].is_mole():
+                                    surrounding_moles += 1
+                                #top
+                                if row > 0 and window.game.cell_data[row-1][column].is_mole():
+                                    surrounding_moles += 1
+                                #top left
+                                if row >0 and column > 0 and window.game.cell_data[row-1][column-1].is_mole():
+                                    surrounding_moles += 1
+                                #top right
+                                if row > 0 and column < window.game.number_of_columns-1 and window.game.cell_data[row-1][column+1].is_mole():
+                                    surrounding_moles += 1
+                                window.game.cell_data[row][column].set_surrounding_moles(surrounding_moles)
+                            
+                            else:
+                                window.current_screen = "lose"
+                            if window.game.free_cells == 0:
+                                window.current_scren = "win"
                                 
         
         for event in list_of_events:
