@@ -1,6 +1,5 @@
 import pygame
 import random
-import hashlib
 from window import Window
 
 
@@ -125,7 +124,7 @@ while window.running:
         
         if key_press[pygame.K_ESCAPE]:
             window.running = False
-
+        #if user presses enter then information checked
         for event in list_of_events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 entered_username = window.logintext.value.strip()
@@ -234,7 +233,7 @@ while window.running:
         tutorial_txt_x_pos = 200
         tutorial_txt_y_pos = 200
         space_between_lines = 50
-
+        #reading from tut.txt
         for line in tutorial_text_1:
             rendered_line = window.small_wording_font.render(line.strip(), True, (0,0,0))
             display.blit(rendered_line, (tutorial_txt_x_pos, tutorial_txt_y_pos))

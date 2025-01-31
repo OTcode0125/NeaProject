@@ -6,6 +6,7 @@ from cell import Cell
 
 pygame.init()
 #game class used to re-initialise the grid of cells, and allows changing difficulty.
+#no death on first click
 class Game():
     def __init__(self, difficulty):
         if difficulty == "easy":
