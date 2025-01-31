@@ -54,7 +54,7 @@ while window.running:
 #all screen switching logic
     if window.current_screen == "initial_screen":
         window.initialscreen_sprites.draw(display)
-        esc_text = window.small_wording_font.render("PRESSING (ESC) AT ANY TIME WILL RETURN YOU TO THIS SCREEN", True, (0,0,0))
+        esc_text = window.small_wording_font.render("PRESSING (ESC) AT ANY SCREENS AFTER THIS WILL RETURN YOU TO THIS SCREEN", True, (255,255,255))
         display.blit(esc_text,(120,50))
         
         center_text(display,"PRESS (ENTER) TO START",window.wording_font,(0,0,0),1920,1000)
