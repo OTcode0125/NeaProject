@@ -1,3 +1,4 @@
+#imports
 import pygame
 import random
 
@@ -7,6 +8,7 @@ from cell import Cell
 pygame.init()
 #game class used to re-initialise the grid of cells, and allows changing difficulty.
 #no death on first click
+#random mine placement function
 class Game():
     def __init__(self, difficulty):
         if difficulty == "easy":
@@ -21,12 +23,12 @@ class Game():
             self.number_of_rows = 20
             self.number_of_moles = 50
             self.square_size = 35
-
+        #calculations for free_cells (how user wins the game)
         self.total_cells = self.number_of_columns*self.number_of_rows
         self.free_cells = self.total_cells-self.number_of_moles
         self.start_ticks = pygame.time.get_ticks()
         self.first_click = True
-
+        #cell data 2d list
         self.cell_data = []
         for row in range(self.number_of_rows):
             self.cell_data.append([])
@@ -40,8 +42,6 @@ class Game():
         
 
         first_click_row, first_click_column = first_click_position
-        
-
         surrounding_cells = set()
         #update first click logic (done)
         for r in [-1, 0, 1]:

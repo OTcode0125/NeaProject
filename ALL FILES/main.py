@@ -390,7 +390,6 @@ while window.running:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 window.current_screen = "initial_screen"
         
-        
         elapsed_time = (pygame.time.get_ticks() - window.game.start_ticks) // 1000
         minutes = elapsed_time // 60
         seconds = elapsed_time % 60
