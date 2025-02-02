@@ -40,7 +40,6 @@ class Game():
         
 
         first_click_row, first_click_column = first_click_position
-        first_click_index = first_click_row * self.number_of_columns + first_click_column
         
 
         surrounding_cells = set()
